@@ -1,7 +1,6 @@
-#/usr/bin/bash
+#!/usr/bin/env bash
 
-# Usage:
-#   select index_file data_file
+# Get command-line arguments, giving usage instructions, when warranted
 if (( $# < 2 ))
 then
   echo

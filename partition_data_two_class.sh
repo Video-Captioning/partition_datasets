@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
+# Get command-line arguments, giving usage instructions, when warranted
 if (( $# != 3 ))
 then
   echo 
@@ -10,6 +11,7 @@ then
   exit 1
 fi
 
+# Define a function to round a number
 round()
 {
 echo $(printf %.$2f $(echo "scale=$2;(((10^$2)*$1)+0.5)/(10^$2)" | bc))
@@ -20,8 +22,10 @@ echo -----------------------------------------
 echo 
 keyword=$1
 fraction=$3
-destination=$keyword`echo "$(round 100*$fraction 0)" | bc`
 
+# Use existing subdirectory, if available; otherwise create a new one
+# The name of the subdirectory is a concatenation of the keyword and training fraction
+destination=$keyword`echo "$(round 100*$fraction 0)" | bc`
 [ -d $destination ]&&echo "Using existing subdirectory" $destination||(echo "Creating subdirectory "; mkdir $destination)
 
 # --- Get indecies for data that matches keyword

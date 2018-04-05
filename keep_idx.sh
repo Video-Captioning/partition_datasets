@@ -1,5 +1,6 @@
-#/usr/bin/bash
+#!/usr/bin/env bash
 
+# Get command-line arguments, giving usage instructions, when warranted
 if (( $# != 2 ))
 then
   echo 
@@ -10,9 +11,8 @@ then
   exit 1
 fi
 
-# Create a script
-# to remove selected rows, by row_id, from data
-
+# Create a script to remove
+# selected rows, by row_id, from data
 awk '{print NR;}' $2 > all_idx
 sed 's/.*/&d/g' $1 > tmp.sed
 sed -f tmp.sed all_idx | sed 's/.*/&d/g' > tmp2.sed

@@ -20,6 +20,6 @@ keyword=$1
 # --- Find all partitions on keyword
 for i in `ls -d $keyword[0-9][0-9]/*/`; do
   for j in `ls -d $i* | grep $datafile`; do
-    echo Batch='"'$i'"'
+    echo $i
   done
 done

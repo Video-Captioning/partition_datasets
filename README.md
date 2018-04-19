@@ -21,13 +21,13 @@
 ### 2. Select a whole bunch of indecies for POSITIVE examples at random, many more than will be needed
 
 * Select the first TRAIN_FRAC of the indecies
-* Create a script to RETAIN selected rows, by row_id, from data
+* Create a script to *RETAIN* selected rows, by row_id, from data
 * Now, KEEP the identified rows for TRAINING (Accomplished via *keep_idx.sh*)
 
 ## 3. Now, do the same for NEGATIVE examples
 
 * Select the first TRAIN_FRAC of the indecies
-* Create a script to REMOVE selected rows, by row_id, from data
+* Create a script to *REMOVE* selected rows, by row_id, from data
 * Now TOSS the identified rows, using the rest for TESTING (Accomplished via *toss_idx.sh*)
 
 ## 4. Summarize results

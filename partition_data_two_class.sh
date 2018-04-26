@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
 
+readonly BASEPATH=$(dirname $0)
+
 # Get command-line arguments, giving usage instructions, when warranted
-if (( $# != 3 ))
-then
+if (( $# != 3 )); then
   echo 
   echo "Usage:"
   echo "  sh $0 keyword labeled_data training_fraction"
@@ -29,12 +30,15 @@ destination=$keyword`echo "$(round 100*$fraction 0)" | bc`
 [ -d $destination ]&&echo "Using existing subdirectory" $destination||(echo "Creating subdirectory "; mkdir $destination)
 
 # --- Get indecies for data that matches keyword
-./get_indexes_for_class.sh $1 $2 > tmp_pos_idx
+$BASEPATH/get_indexes_for_class.sh $1 $2 > tmp_pos_idx
 
 # --- Select positive examples
-./keep_idx.sh tmp_pos_idx $2 > tmp_pos_ex
+$BASEPATH/keep_idx.sh tmp_pos_idx $2 > tmp_pos_ex
 # --- Select negative examples
-./toss_idx.sh tmp_pos_idx $2 > tmp_neg_ex
+$BASEPATH/toss_idx.sh tmp_pos_idx $2 > tmp_neg_ex
+
+[ 0 -eq $(wc tmp_pos_ex | awk '{print $1;}') ] && echo 'No positive examples found -- QUITTING'; exit
+[ 0 -eq $(wc tmp_neg_ex | awk '{print $1;}') ] && echo 'No negative examples found -- QUITTING'; exit
 
 # --- Show quantities of positive and negative examples
 echo
@@ -53,7 +57,7 @@ awk 'END{ print "jot -r " NR,1,NR " | sort -n | uniq";}' tmp_pos_ex | sh > tmp_f
 awk -v frac=$3 'END{ printf( "sed 1,%d!d tmp_fountain_of_indecies\n" ), frac*NR;}' tmp_pos_ex | sh > tmp_pos_rownums
 
 # --- Now, do the same for NEGATIVE examples
-# --- Select a whole bunch of indecies
+echo "# --- Select a whole bunch of indecies"
 awk 'END{ print "jot -r " NR,1,NR " | sort -n | uniq";}' tmp_neg_ex | sh > tmp_fountain_of_indecies
 
 # --- Take the first TRAIN_FRAC of the indecies
@@ -62,11 +66,12 @@ awk -v frac=$3 'END{ printf( "sed 1,%d!d tmp_fountain_of_indecies\n" ), frac*NR;
 # -----------------------------------------------
 
 # --- Now, KEEP the identified rows for TRAINING
-./keep_idx.sh tmp_pos_rownums tmp_pos_ex > $destination/training_pos.txt
-./keep_idx.sh tmp_neg_rownums tmp_neg_ex > $destination/training_neg.txt
+$BASEPATH/keep_idx.sh tmp_pos_rownums tmp_pos_ex > $destination/training_pos.txt
+$BASEPATH/keep_idx.sh tmp_neg_rownums tmp_neg_ex > $destination/training_neg.txt
+
 # --- then TOSS the identified rows, using the rest for TESTING...
-./toss_idx.sh tmp_pos_rownums tmp_pos_ex > $destination/testing_pos.txt
-./toss_idx.sh tmp_neg_rownums tmp_neg_ex > $destination/testing_neg.txt
+$BASEPATH/toss_idx.sh tmp_pos_rownums tmp_pos_ex > $destination/testing_pos.txt
+$BASEPATH/toss_idx.sh tmp_neg_rownums tmp_neg_ex > $destination/testing_neg.txt
 
 # -----------------------------------------------
 

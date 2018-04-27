@@ -46,10 +46,12 @@ function usage()
     esac
   done
 
-[ ! -n "$KEYWORD" ]    && ( echo 'Please specify a keyword -k or --keyword'; exit )
+# --- Trap failures
+[ ! -n "$KEYWORD"    ] && ( echo 'Please specify a keyword -k or --keyword'; exit )
 [ ! -n "$LABEL_FILE" ] && ( echo 'Please specify a label file -l or --label_file'; exit )
-[ ! -e $LABEL_FILE    ] && ( echo 'Label file not found'; exit )
+[ ! -e $LABEL_FILE   ] && ( echo 'Label file not found'; exit )
 
+# --- If all required pieces are in place, find the row indeces
 ( [ -n "$KEYWORD" ] && [ -n "$LABEL_FILE" ] && [ -e $LABEL_FILE ] ) && ( awk '/'$INDEX_FILE'/{print NR;}' $LABEL_FILE  )
 
 # %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -1,19 +1,12 @@
 #!/usr/bin/env bash
 
-# Get command-line arguments, giving usage instructions, when warranted
-if (( $# != 2 ))
-then
-  echo 
-  echo "Usage:"
-  echo "  sh $0 idx dat"
-  echo "Example:"
-  echo "  sh $0 idx labeled_3471.txt"
-  exit 1
-fi
+# Keep the specified image indexes and discard the rest
 
-# Create a script to remove
-# selected rows, by row_id, from data
-awk '{print NR;}' $2 > all_idx
-sed 's/.*/&d/g' $1 > tmp.sed
-sed -f tmp.sed all_idx | sed 's/.*/&d/g' > tmp2.sed
-sed -f tmp2.sed $2
+KEEP_ROWS=$1
+CLASS_LABELS=$2
+
+awk '{print NR;}' $CLASS_LABELS           >   all_row_numbers
+sed 's/.*/&d/g' all_row_numbers           >   toss_all_rows
+sed 's/.*/&d/g' $KEEP_ROWS                >   except_for_these
+sed -f   except_for_these toss_all_rows   >   script_to_keep
+sed -f   script_to_keep   $CLASS_LABELS
